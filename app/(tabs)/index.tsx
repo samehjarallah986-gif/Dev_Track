@@ -88,6 +88,13 @@ const getConditionLabel = (code: number) => {
   return labels[condition];
 };
 
+const toLocalDateKey = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const buildWeeklyDates = () => {
   const today = new Date();
   const startOfWeek = new Date(today);
@@ -166,17 +173,16 @@ const getWeatherSummary = (location: WeatherLocation, data: any): WeatherState =
   const summary = getConditionLabel(code);
 
   const weeklyDates = buildWeeklyDates();
-  const weekly = weeklyDates.map((date) => {
-    const dateKey = date.toISOString().slice(0, 10);
-    const matchIndex = daily.time.indexOf(dateKey);
-    const todayData = matchIndex >= 0 ? {
-      min: Number(daily.temperature_2m_min[matchIndex] ?? 0),
-      max: Number(daily.temperature_2m_max[matchIndex] ?? 0),
-      code: Number(daily.weather_code[matchIndex] ?? code),
-    } : {
-      min: Number(daily.temperature_2m_min[0] ?? 0),
-      max: Number(daily.temperature_2m_max[0] ?? 0),
-      code,
+  const weekly = weeklyDates.map((date, index) => {
+    const dateKey = toLocalDateKey(date);
+    const matchIndex = Array.isArray(daily.time)
+      ? daily.time.findIndex((entry: string) => entry === dateKey)
+      : -1;
+    const actualIndex = matchIndex >= 0 ? matchIndex : Math.min(index, (daily.time?.length ?? 1) - 1);
+    const todayData = {
+      min: Number(daily.temperature_2m_min?.[actualIndex] ?? 0),
+      max: Number(daily.temperature_2m_max?.[actualIndex] ?? 0),
+      code: Number(daily.weather_code?.[actualIndex] ?? code),
     };
 
     return {
@@ -256,22 +262,25 @@ const RainOverlay = ({ color }: { color: string }) => {
 };
 
 const SkyVisual = ({ condition, accent, isDark }: { condition: WeatherState['condition']; accent: string; isDark: boolean }) => {
-  const sunOpacity = condition === 'sunny' || condition === 'partly' ? 1 : 0.2;
+  const isBright = condition === 'sunny' || condition === 'partly';
+  const sunColor = condition === 'partly' ? '#f7d35c' : '#ffd54a';
+  const sunHalo = condition === 'partly' ? 'rgba(255, 213, 74, 0.35)' : 'rgba(255, 213, 74, 0.8)';
+  const cloudColor = condition === 'partly' ? '#ffffff' : condition === 'cloudy' ? '#c9d3df' : '#dfeaf7';
   const cloudOpacity = condition === 'cloudy' || condition === 'partly' || condition === 'rainy' || condition === 'misty' ? 1 : 0.35;
 
   return (
     <View pointerEvents="none" style={styles.visualWrapper}>
-      <View style={[styles.sunGlow, { opacity: sunOpacity, backgroundColor: accent }]} />
+      <View style={[styles.sunGlow, { opacity: isBright ? 1 : 0.35, backgroundColor: sunHalo }]} />
       {(condition === 'sunny' || condition === 'partly') && (
-        <View style={[styles.sun, { backgroundColor: accent }]}>
-          <View style={[styles.sunRays, { borderColor: accent }]} />
+        <View style={[styles.sun, { backgroundColor: sunColor, shadowColor: sunColor }]}> 
+          <View style={[styles.sunRays, { borderColor: condition === 'partly' ? '#fbe7a6' : '#ffe791' }]} />
         </View>
       )}
       {(condition === 'cloudy' || condition === 'partly' || condition === 'rainy' || condition === 'misty') && (
         <>
-          <View style={[styles.cloud, { opacity: cloudOpacity, backgroundColor: isDark ? '#dfeaf7' : '#ffffff' }, styles.cloudOne]} />
-          <View style={[styles.cloud, { opacity: cloudOpacity * 0.9, backgroundColor: isDark ? '#e5eeff' : '#f7fbff' }, styles.cloudTwo]} />
-          <View style={[styles.cloud, { opacity: cloudOpacity * 0.8, backgroundColor: isDark ? '#dfeaf7' : '#f2f7ff' }, styles.cloudThree]} />
+          <View style={[styles.cloud, { opacity: cloudOpacity, backgroundColor: cloudColor }, styles.cloudOne]} />
+          <View style={[styles.cloud, { opacity: cloudOpacity * 0.9, backgroundColor: condition === 'partly' ? '#f5f7fb' : cloudColor }, styles.cloudTwo]} />
+          <View style={[styles.cloud, { opacity: cloudOpacity * 0.8, backgroundColor: condition === 'partly' ? '#eef3fb' : cloudColor }, styles.cloudThree]} />
         </>
       )}
       {condition === 'rainy' && <RainOverlay color={isDark ? '#bfe1ff' : '#5aa9ff'} />}

@@ -1,50 +1,110 @@
-# Welcome to your Expo app 👋
+# Weather Bloom
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A playful weather app built with Expo and React Native. It gives users a bright, dynamic interface with weather-reactive visuals, a welcome screen, a global city list, and a weekly forecast that updates based on the selected location.
 
-## Get started
+## Features
 
-1. Install dependencies
+- Welcome intro screen before entering the app
+- Light and dark mode toggle
+- Global city and country selector
+- Real-time weather data with Open-Meteo
+- Weather-reactive background visuals for:
+  - sunny
+  - partly sunny
+  - cloudy
+  - rainy
+  - stormy
+  - snowy
+  - misty
+- Weekly forecast from Sunday through Saturday
+- Temperature, feels-like, humidity, wind, sunrise, and sunset details
+- Responsive, colorful UI designed to feel lively and friendly
 
-   ```bash
-   npm install
-   ```
+## Project structure
 
-2. Start the app
+- `app/` — app screens and routing
+- `app/index.tsx` — welcome/intro screen
+- `app/(tabs)/index.tsx` — main weather dashboard
+- `app/(tabs)/profile.tsx` — city/country selection screen
+- `components/` — reusable UI pieces
+- `hooks/` — custom hooks
+- `constants/` — theme and app constants
 
-   ```bash
-   npx expo start
-   ```
+## Requirements
 
-In the output, you'll find options to open the app in a
+Before running the app, make sure you have:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Node.js installed
+- npm or yarn installed
+- Expo CLI available through npm
+- Android Studio or iOS simulator if you want to run the app on emulators
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Install
 
-## Get a fresh project
-
-When you're ready, run:
+From the project root:
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Run the app
 
-## Learn more
+Start the Expo development server:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npx expo start
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Then choose one of the following:
 
-## Join the community
+- press `a` to open in Android emulator
+- press `i` to open in iOS simulator
+- press `w` to open in the web browser
+- scan the QR code with the Expo Go app on your phone
 
-Join our community of developers creating universal apps.
+## App navigation
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+1. Open the app and you will land on the welcome screen.
+2. Tap the main button to enter the weather dashboard.
+3. Use the city list to switch between locations worldwide.
+4. Select a city to see current weather and its weekly forecast.
+5. Toggle dark/light mode using the mode button in the top-right of the weather screen.
+6. View the current condition, humidity, wind, sunrise, and sunset information.
+
+## Weather data
+
+The app uses the Open-Meteo API to fetch:
+
+- current weather conditions
+- hourly and daily forecast data
+- sunrise and sunset times
+- weekly temperature ranges
+
+## Notes for developers
+
+- The app uses Expo Router for file-based navigation.
+- Weather logic and UI are handled in the main dashboard screen.
+- The app is designed to be easy to extend if you want to add search, favorites, or more weather metrics.
+
+## Useful commands
+
+```bash
+npm install
+npx expo start
+npx expo start --android
+npx expo start --ios
+npx expo start --web
+```
+
+## Troubleshooting
+
+If the app does not start:
+
+- delete `node_modules` and reinstall with `npm install`
+- make sure the Expo development server is running
+- check that your environment has the necessary emulator or device access
+- verify that your device or emulator is connected properly
+
+## License
+
+This project is for educational and personal use.
